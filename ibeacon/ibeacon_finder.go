@@ -1,4 +1,4 @@
-package main
+package ibreader
 
 import (
 	"encoding/binary"
@@ -13,6 +13,7 @@ import (
 )
 
 type iBeacon struct {
+	// structure of ibeacon data
 	uuid  string
 	major uint16
 	minor uint16
