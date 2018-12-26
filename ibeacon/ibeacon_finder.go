@@ -12,25 +12,28 @@ import (
 	"github.com/paypal/gatt/examples/option"
 )
 
-type iBeacon struct {
-	// structure of ibeacon data
+// structure of ibeacon data
+type IBeacon struct {
+	// uuid of the beacon
 	uuid  string
 	major uint16
 	minor uint16
 }
 
-func NewiBeacon(data []byte) (*iBeacon, error) {
+// initialize iBeacon
+func NewiBeacon(data []byte) (*IBeacon, error) {
 	if len(data) < 25 || binary.BigEndian.Uint32(data) != 0x4c000215 {
-		return nil, errors.New("Not an iBeacon")
+		return nil, errors.New("Not an IBeacon")
 	}
 	fmt.Println("Head: ", binary.BigEndian.Uint32(data))
-	beacon := new(iBeacon)
+	beacon := new(IBeacon)
 	beacon.uuid = strings.ToUpper(hex.EncodeToString(data[4:8]) + "-" + hex.EncodeToString(data[8:10]) + "-" + hex.EncodeToString(data[10:12]) + "-" + hex.EncodeToString(data[12:14]) + "-" + hex.EncodeToString(data[14:20]))
 	beacon.major = binary.BigEndian.Uint16(data[20:22])
 	beacon.minor = binary.BigEndian.Uint16(data[22:24])
 	return beacon, nil
 }
 
+// if find iBeacon, read the data
 func onPerhipheralDiscovered(p gatt.Peripheral, a *gatt.Advertisement, rssi int) {
 	// fmt.Println(string(a.ManufacturerData))
 	b, err := NewiBeacon(a.ManufacturerData)
